@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        button {
+            cursor: pointer;
+        }
+        
+        .wrapper {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+        }
+        
+        .contacts {
+            height: 100%;
+            flex: 1;
+            border-right: 1px solid #ccc;
+        }
+        
+        .info {
+            height: 100%;
+            flex: 4;
+        }
+        
+        .add {
+            width: 100%;
+            height: 6vh;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .addcontact {
+            width: 1.5vw;
+            height: 1.5vw;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 1vw;
+            background-color: rgb(7, 193, 96);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .clist {
+            width: 100%;
+            height: 90vh;
+            overflow-y: scroll;
+        }
+        
+        .citem {
+            width: 100%;
+            height: 8vh;
+            border-bottom: 1px solid #ccc;
+            padding-left: 1vw;
+            position: relative;
+        }
+        
+        .citem:hover {
+            background: rgb(224, 222, 222);
+        }
+        
+        .cname {
+            width: 100%;
+            height: 5vh;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 550;
+        }
+        
+        .cphone {
+            width: 100%;
+            height: 3vh;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .top-info {
+            width: 100%;
+            height: 10vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .details {
+            width: 100%;
+            height: 90vh;
+            padding-left: 2vw;
+            padding-top: 3vh;
+        }
+        
+        .caozuo {
+            position: absolute;
+            height: 100%;
+            width: 5vw;
+            top: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+        
+        .edit {
+            color: white;
+            background-color: rgb(7, 193, 96);
+            border: none;
+            width: 3vw;
+            height: 1.5vw;
+        }
+        
+        .del {
+            color: white;
+            background-color: red;
+            border: none;
+            width: 3vw;
+            height: 1.5vw;
+        }
+        
+        .addalert {
+            position: absolute;
+            display: none;
+            width: 30vw;
+            height: 24vw;
+            background-color: #fff;
+            box-shadow: 0px 5px 8px #ccc;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 15vh;
+        }
+        
+        .head {
+            width: 100%;
+            height: 7vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .close {
+            width: 1.5vw;
+            height: 1.5vw;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 1vw;
+            cursor: pointer;
+        }
+        
+        .close svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .addinfo {
+            width: 100%;
+            padding: 5% 6%;
+        }
+        
+        .addinfo div {
+            width: 100%;
+            height: 5vh;
+            display: flex;
+            align-items: center;
+            margin: 2vh;
+        }
+        
+        .addinfo div span {
+            flex: 1;
+            height: 100%;
+        }
+        
+        .addinfo div input {
+            flex: 3.5;
+            height: 100%;
+            border: 1px solid #ccc;
+        }
+        
+        .addbtn {
+            position: absolute;
+            left: 80%;
+            bottom: 3vh;
+            width: 4vw;
+            height: 2vw;
+            color: white;
+            background-color: rgb(7, 193, 96);
+            border: none;
+            border-radius: 2px;
+        }
+        
+        .editbtn {
+            position: absolute;
+            left: 80%;
+            bottom: 3vh;
+            width: 4vw;
+            height: 2vw;
+            color: white;
+            background-color: rgb(7, 193, 96);
+            border: none;
+            border-radius: 2px;
+        }
+        
+        .editalert {
+            position: absolute;
+            display: none;
+            width: 30vw;
+            height: 24vw;
+            background-color: #fff;
+            box-shadow: 0px 5px 8px #ccc;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 15vh;
+        }
+        
+        .editclose {
+            width: 1.5vw;
+            height: 1.5vw;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 1vw;
+            cursor: pointer;
+        }
+        
+        .editclose svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .shoucang {
+            width: 100%;
+            height: 4vh;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            padding-right: 1vw;
+        }
+        
+        .favorite {
+            background-color: rgb(7, 193, 96);
+            color: white;
+            border: none;
+        }
+        
+        .flist {
+            display: none;
+        }
+        
+        .f-detail {
+            overflow-y: scroll;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: auto;
+            width: 100%;
+            gap: 3vw;
+        }
+        
+        .card {
+            width: 90%;
+            height: 30vh;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .mute {
+            width: 5vw;
+            height: 3vh;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(7, 193, 96);
+            color: white;
+            cursor: pointer;
+        }
+        
+        .delfa {
+            position: absolute;
+            right: 1vw;
+            bottom: 1vh;
+        }
+        
+        .addone {
+            height: 1.5vw;
+            width: 6vh;
+            position: absolute;
+            left: 68%;
+            top: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-50%);
+            top: 50%;
+            transform: translateY(-50%);
+            right: 1vw;
+            background-color: rgb(7, 193, 96);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .input {
+            position: relative;
+            margin: 0 2vw;
+            background-color: rgb(173, 184, 105);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .output {
+            background-color: rgb(7, 193, 96);
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="contacts">
+            <div class="add">通讯录信息<button class="addcontact">+</button></div>
+            <div class="clist">
+                <!-- <div class="citem">
+                    <div class="cname">姓名：江流不息</div>
+                    <div class="cphone">电话：18888888888</div>
+                    <div class="caozuo">
+                        <button class="edit">编辑</button>
+                        <button class="del" onclick="del()">删除</button>
+                    </div>
+                </div> -->
+            </div>
+            <div class="shoucang">
+                <button class="output" onclick="output()">导出通讯录</button>
+                <button class="input">导入通讯录<input id="input" style="position: absolute;opacity: 0; z-index: 999; width: 4vw; height: 1vw;" type="file"></button>
+                <button class="favorite">收藏夹</button>
+            </div>
+        </div>
+        <div class="info dlist">
+            <div class="top-info">详细信息</div>
+            <div class="details">
+                <!-- <div class="mute">收藏</div> -->
+                <!-- <h4 class="name">姓名：江流不息</h4>
+                <h4 class="phone">电话：18888888888</h4>
+                <h4 class="email">电子邮件：123456@qq.com</h4>
+                <h4 class="address">地址：中国</h4> -->
+            </div>
+        </div>
+        <div class="flist info">
+            <div class="top-info">收藏夹</div>
+            <div class="f-detail">
+
+            </div>
+        </div>
+        <div class="addalert">
+            <div class="head">新增联系人
+                <div class="close"><svg t="1729338334989" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2335" width="128" height="128">
+                        <path
+                            d="M512 466.944l233.472-233.472a31.744 31.744 0 0 1 45.056 45.056L557.056 512l233.472 233.472a31.744 31.744 0 0 1-45.056 45.056L512 557.056l-233.472 233.472a31.744 31.744 0 0 1-45.056-45.056L466.944 512 233.472 278.528a31.744 31.744 0 0 1 45.056-45.056z"
+                            fill="#5A5A68" p-id="2336"></path>
+                    </svg></div>
+            </div>
+            <div class="addinfo">
+                <div><span>姓名：</span><input type="text" id="addname"></div>
+                <div><span>电话：</span> <input type="text" id="addphone"></div>
+                <div><span>电子邮件：</span> <input type="text" id="addemail"></div>
+                <div><span>地址：</span><input type="text" id="addaddress"></div>
+            </div>
+            <button class="addbtn">添加</button>
+        </div>
+        <div class="editalert">
+            <div class="head">编辑信息
+                <div class="editclose"><svg t="1729338334989" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2335" width="128" height="128">
+                        <path
+                            d="M512 466.944l233.472-233.472a31.744 31.744 0 0 1 45.056 45.056L557.056 512l233.472 233.472a31.744 31.744 0 0 1-45.056 45.056L512 557.056l-233.472 233.472a31.744 31.744 0 0 1-45.056-45.056L466.944 512 233.472 278.528a31.744 31.744 0 0 1 45.056-45.056z"
+                            fill="#5A5A68" p-id="2336"></path>
+                    </svg></div>
+            </div>
+            <div class="addinfo">
+                <div><span>姓名：</span><input type="text" id="editname"></div>
+                <div><span>电话：</span> <input type="text" id="editphone"></div>
+                <div><span>电子邮件：</span> <input type="text" id="editemail"></div>
+                <div><span>地址：</span><input type="text" id="editaddress"></div>
+                <div><span>新增手机号：<input type="text" id="newphone"></span></div>
+            </div>
+            <button class="editbtn" onclick="editconfirm()">确认</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script>
+        let favorite = document.querySelector('.favorite')
+        let clist = document.querySelector('.clist')
+        let dlist = document.querySelector('.dlist')
+        let flist = document.querySelector('.flist')
+        let fdetail = document.querySelector('.f-detail')
+        favorite.addEventListener('click', () => {
+            dlist.style.display = 'none'
+            flist.style.display = 'block'
+        })
+        let data
+        const getcontact = () => {
+            var xhr = new XMLHttpRequest();
+            var url = "/contacts"; // 替换为你的API端点
+            xhr.open("GET", url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 请求成功
+                    data = JSON.parse(xhr.responseText)
+                    console.log(data)
+                    data.forEach(item => {
+                        clist.innerHTML += `
+                            <div class="citem" onclick="details('${item.name}', '${item.phone}', '${item.email}', '${item.address}', '${item.id}')">
+                                <div class="cname">姓名：${item.name}</div>
+                                <div class="cphone">电话：${item.phone.split(';')[0]}</div>
+                                <div class="caozuo">
+                                    <button class="edit" onclick="EDIT('${item.id}', '${item.name}', '${item.phone}', '${item.email}', '${item.address}')">编辑</button>
+                                    <button class="del" onclick="del(${item.id})">删除</button>
+                                </div>
+                            </div>
+                        `
+                    })
+                } else {
+                    // 请求失败
+                    console.error(xhr.statusText);
+                }
+            };
+            xhr.send()
+        }
+        getcontact()
+        const details = (name, phone, email, address, id) => {
+            flist.style.display = 'none'
+            dlist.style.display = 'block'
+            let phones = phone.split(';')
+            document.querySelector('.details').innerHTML = `
+                <div class="mute" onclick="shoucang('${id}')">收藏</div>
+                <h4 class="name">姓名：${name}</h4>
+                <h4 class="email">电子邮件：${email}</h4>
+                <h4 class="address">地址：${address}</h4>
+            `
+            for (let i = 0; i < phones.length; i++) {
+                document.querySelector('.details').innerHTML += `
+                <h4 class="phone">电话号码${i+1}：${phones[i]}</h4>
+                `
+            }
+        }
+        const shoucang = async(id) => {
+            let D = data.filter(item => item.id == id)
+            console.log(D)
+            if (localStorage.getItem('favorite')) {
+                let DATA = JSON.parse(localStorage.getItem('favorite'))
+                if (DATA.filter(item => item.id == id)[0]) {
+                    alert('此通讯录已被收藏！')
+                    return
+                }
+                DATA.push(D[0])
+                localStorage.setItem('favorite', JSON.stringify(DATA))
+            } else {
+                localStorage.setItem('favorite', JSON.stringify(D))
+            }
+            alert('收藏成功！')
+            window.location.reload()
+        }
+        const getShou = () => {
+            if (localStorage.getItem('favorite')) {
+                let f = JSON.parse(localStorage.getItem('favorite'))
+                console.log(f)
+                f.forEach((item) => {
+                    let phones = item.phone.split(';')
+                    fdetail.innerHTML += `
+                    <div class="card">
+                        <h4 class="name">姓名：${item.name}</h4>
+                        <h4 class="phone">电话：${phones[0]}</h4>
+                        <h4 class="email">电子邮件：${item.email}</h4>
+                        <h4 class="address">地址：${item.address}</h4>
+                        <button class="del delfa" onclick="delF('${item.id}')">删除</button>
+                    </div>
+                    `
+                })
+            } else {
+                return
+            }
+        }
+        getShou()
+        const delF = (id) => {
+            console.log(id)
+            let DATA = JSON.parse(localStorage.getItem('favorite'))
+            console.log(DATA)
+            let data = DATA.filter(item => item.id != id)
+            console.log(data)
+            localStorage.setItem('favorite', JSON.stringify(data))
+            alert('删除成功！')
+            window.location.reload()
+        }
+        let add = document.querySelector('.addalert')
+        let edit = document.querySelector('.editalert')
+        document.querySelector('.addcontact').addEventListener('click', () => {
+            add.style.display = 'block'
+        })
+        document.querySelector('.close').addEventListener('click', () => {
+                add.style.display = 'none'
+            })
+            // document.querySelector('.edit').addEventListener('click', () => {
+            //     edit.style.display = 'block'
+            // })
+        let ID
+        const EDIT = (id, name, phone, email, address) => {
+            console.log(id, name, phone, email, address)
+            ID = id
+            document.getElementById('editname').value = name
+            document.getElementById('editphone').value = phone.split(';')[0]
+            document.getElementById('editemail').value = email
+            document.getElementById('editaddress').value = address
+            edit.style.display = 'block'
+        }
+        document.querySelector('.editclose').addEventListener('click', () => {
+            edit.style.display = 'none'
+        })
+        const editconfirm = () => {
+            let name = document.getElementById('editname').value
+            let phone = document.getElementById('editphone').value
+            let email = document.getElementById('editemail').value
+            let address = document.getElementById('editaddress').value
+            let newphone = document.querySelector('#newphone').value
+            var xhr = new XMLHttpRequest();
+            var url = "/edit";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            var data = JSON.stringify({
+                id: ID,
+                name,
+                phone,
+                email,
+                address,
+                newphone
+            });
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 请求成功
+                    var data = xhr.responseText
+                    if (data == 'ok') {
+                        alert('编辑成功！')
+                        location.reload()
+                    }
+                } else {
+                    // 请求失败
+                    console.error(xhr.statusText);
+                }
+            };
+
+            xhr.send(data)
+        }
+        const del = (id) => {
+            let flag = confirm('真的要删除吗？')
+            if (flag) {
+                if (localStorage.getItem('favorite')) {
+                    console.log(id)
+                    let DATA = JSON.parse(localStorage.getItem('favorite'))
+                    console.log(DATA)
+                    let data = DATA.filter(item => item.id != id)
+                    console.log(data)
+                    localStorage.setItem('favorite', JSON.stringify(data))
+                }
+                var xhr = new XMLHttpRequest();
+                var url = "/del"; // 替换为你的API端点
+
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                var data = JSON.stringify({
+                    id
+                });
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // 请求成功
+                        var data = xhr.responseText
+                        if (data == 'ok') {
+                            alert('删除成功！')
+                            location.reload()
+                        }
+                    } else {
+                        // 请求失败
+                        console.error(xhr.statusText);
+                    }
+                };
+
+                xhr.send(data)
+            }
+        }
+        const ADD = () => {
+            let name = document.getElementById('addname').value
+            let phone = document.getElementById('addphone').value
+            let email = document.getElementById('addemail').value
+            let address = document.getElementById('addaddress').value
+            var xhr = new XMLHttpRequest();
+            var url = "/add"; // 替换为你的API端点
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            var data = JSON.stringify({
+                name,
+                phone,
+                email,
+                address
+            });
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 请求成功
+                    var data = xhr.responseText
+                    if (data == 'ok') {
+                        alert('添加成功！')
+                        location.reload()
+                    }
+                } else {
+                    // 请求失败
+                    console.error(xhr.statusText);
+                }
+            };
+
+            xhr.send(data)
+        }
+        document.querySelector('.addbtn').addEventListener('click', ADD)
+        const output = async() => {
+            console.log(data)
+            var xhr = new XMLHttpRequest();
+            var url = "/output"; // 替换为你的API端点
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 请求成功
+                    var data = xhr.responseText
+                    if (data == 'ok') {
+                        alert('导出成功！')
+                        location.href = 'http://127.0.0.1:5000/output.xlsx'
+                    }
+                } else {
+                    // 请求失败
+                    console.error(xhr.statusText);
+                }
+            };
+
+            xhr.send(JSON.stringify(data))
+        }
+        document.getElementById('input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {
+                    type: 'array'
+                });
+
+                // 假设我们只读取第一个工作表
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+                console.log(json)
+                var xhr = new XMLHttpRequest();
+                var url = "/input"; // 替换为你的API端点
+
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // 请求成功
+                        var data = xhr.responseText
+                        if (data == 'ok') {
+                            alert('导出成功！')
+                            location.reload()
+                        }
+                    } else {
+                        // 请求失败
+                        console.error(xhr.statusText);
+                    }
+                };
+
+                xhr.send(JSON.stringify(json))
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+
+</html>
