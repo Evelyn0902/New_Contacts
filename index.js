@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const XLSX = require('xlsx');
 
 const app = express();
+const port = 5000;
 
 // 使用环境变量来管理数据库配置
 const dbConfig = {
@@ -26,6 +27,7 @@ connection.connect(err => {
 app.use(express.static('pages'));
 app.use(bodyParser.json());
 
+// 路由处理
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/pages/index.html');
 });
@@ -37,69 +39,52 @@ app.post('/add', async (req, res) => {
   }
 
   const query = 'INSERT INTO contacts (name, phone, email, address) VALUES (?, ?, ?, ?)';
-  try {
-    await new Promise((resolve, reject) => {
-      connection.query(query, [name, phone, email, address], (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
+  connection.query(query, [name, phone, email, address], (error, results) => {
+    if (error) {
+      console.error('添加数据时出错:', error.message);
+      return res.status(500).send('内部服务器错误');
+    }
     res.send('ok');
-  } catch (error) {
-    console.error('添加数据时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  });
 });
 
-app.get('/contacts', async (req, res) => {
-  try {
-    const results = await new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM contacts', (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
+app.get('/contacts', (req, res) => {
+  connection.query('SELECT * FROM contacts', (error, results) => {
+    if (error) {
+      console.error('获取数据时出错:', error.message);
+      return res.status(500).send('内部服务器错误');
+    }
     res.json(results);
-  } catch (error) {
-    console.error('获取数据时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  });
 });
 
-app.post('/del', async (req, res) => {
+app.post('/del', (req, res) => {
   const { id } = req.body;
   if (!id) {
     return res.status(400).send('ID是必填项');
   }
 
   const deleteSql = 'DELETE FROM contacts WHERE id = ?';
-  try {
-    await new Promise((resolve, reject) => {
-      connection.query(deleteSql, [id], (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
+  connection.query(deleteSql, [id], (error, results) => {
+    if (error) {
+      console.error('删除数据时出错:', error.message);
+      return res.status(500).send('内部服务器错误');
+    }
     res.send('ok');
-  } catch (error) {
-    console.error('删除数据时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  });
 });
 
-app.post('/edit', async (req, res) => {
+app.post('/edit', (req, res) => {
   const { id, name, phone, newphone, email, address } = req.body;
   if (!id || !name || !email || !address) {
     return res.status(400).send('所有字段都是必填项');
   }
 
-  try {
-    const results = await new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM contacts WHERE id = ?', [id], (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
+  connection.query('SELECT * FROM contacts WHERE id = ?', [id], (error, results) => {
+    if (error) {
+      console.error('更新数据时出错:', error.message);
+      return res.status(500).send('内部服务器错误');
+    }
 
     let newp = phone;
     if (newphone) {
@@ -110,53 +95,49 @@ app.post('/edit', async (req, res) => {
     }
 
     const updateQuery = 'UPDATE contacts SET name = ?, phone = ?, email = ?, address = ? WHERE id = ?';
-    await new Promise((resolve, reject) => {
-      connection.query(updateQuery, [name, newp, email, address, id], (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
+    connection.query(updateQuery, [name, newp, email, address, id], (error, results) => {
+      if (error) {
+        console.error('更新数据时出错:', error.message);
+        return res.status(500).send('内部服务器错误');
+      }
+      res.send('ok');
     });
-    res.send('ok');
-  } catch (error) {
-    console.error('更新数据时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  });
 });
 
-app.post('/output', async (req, res) => {
+app.post('/output', (req, res) => {
   const data = req.body;
-  try {
-    const workbook = XLSX.utils.book_new();
-    const xlsdata = [['id', '姓名', '电话', '邮箱', '地址']];
-    data.forEach(item => {
-      xlsdata.push([item.id, item.name, item.phone, item.email, item.address]);
-    });
-    const worksheet = XLSX.utils.aoa_to_sheet(xlsdata);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "./pages/output.xlsx");
-    res.send('ok');
-  } catch (error) {
-    console.error('导出Excel时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  const workbook = XLSX.utils.book_new();
+  const xlsdata = [['id', '姓名', '电话', '邮箱', '地址']];
+  data.forEach(item => {
+    xlsdata.push([item.id, item.name, item.phone, item.email, item.address]);
+  });
+  const worksheet = XLSX.utils.aoa_to_sheet(xlsdata);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  XLSX.writeFile(workbook, "./pages/output.xlsx");
+  res.send('ok');
 });
 
-app.post('/input', async (req, res) => {
+app.post('/input', (req, res) => {
   const data = req.body;
-  try {
-    data.forEach(item => {
-      const query = 'INSERT INTO contacts (name, phone, email, address) VALUES (?, ?, ?, ?)';
-      connection.query(query, [item['姓名'], item['电话'], item['邮箱'], item['地址']], (error, results) => {
-        if (error) throw error;
-      });
+  data.forEach(item => {
+    const query = 'INSERT INTO contacts (name, phone, email, address) VALUES (?, ?, ?, ?)';
+    connection.query(query, [item['姓名'], item['电话'], item['邮箱'], item['地址']], (error, results) => {
+      if (error) {
+        console.error('导入数据时出错:', error.message);
+        return res.status(500).send('内部服务器错误');
+      }
     });
-    res.send('ok');
-  } catch (error) {
-    console.error('导入数据时出错:', error.message);
-    res.status(500).send('内部服务器错误');
-  }
+  });
+  res.send('ok');
 });
 
-app.listen(5000, () => {
-  console.log('服务在http://127.0.0.1:5000/ 启动');
+// 错误处理中间件
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('内部服务器错误');
+});
+
+app.listen(port, () => {
+  console.log(`服务在http://127.0.0.1:${port}/ 启动`);
 });
